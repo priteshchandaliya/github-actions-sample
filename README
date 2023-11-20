@@ -1,1 +1,8 @@
-Here's a step-by-step guide on how to create a GitHub repository with GitHub Actions that provisions an EC2 instance, runs a Docker container, and allows SSH access with a password:
+Here's a step-by-step guide on how to create a GitHub Actions project
+
+This will create a workflow:
+
+- Provision a EC2 instance 
+- Install Docker
+- Run a nginx container
+- Allow SSH access to the VM via a password
