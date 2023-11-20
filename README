@@ -1,0 +1,1 @@
+Here's a step-by-step guide on how to create a GitHub repository with GitHub Actions that provisions an EC2 instance, runs a Docker container, and allows SSH access with a password:

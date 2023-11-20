@@ -9,4 +9,10 @@ resource "aws_instance" "example" {
   tags = {
     Name = "nginx-instance"
   }
+
+  connection {
+    type     = "ssh"
+    user     = "ec2-user"
+    password = "CloudLabs12$"
+  }
 }

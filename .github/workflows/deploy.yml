@@ -1,0 +1,50 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.5
+
+      - name: Initialize Terraform
+        run: terraform init
+
+      - name: Apply Terraform
+        run: terraform apply -auto-approve
+
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
+      - name: Set up password for SSH
+        run: echo 'CloudLabs12$' > password.txt
+
+      - name: Copy password file to EC2
+        run: scp -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} password.txt ec2-user@${{ steps.setup.outputs.public_ip }}:/home/ec2-user/
+
+      - name: Connect to EC2 using password
+        run: sshpass -p 'password123' ssh -o StrictHostKeyChecking=no ec2-user@${{ steps.setup.outputs.public_ip }} "echo 'Connected to EC2'"
+
+      - name: Install Docker and Nginx
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ steps.setup.outputs.public_ip }} << 'EOF'
+            sudo amazon-linux-extras install -y docker
+            sudo service docker start
+            sudo usermod -a -G docker ec2-user
+            sudo docker build -t my-nginx-image .
+            sudo docker run -d -p 80:80 --name nginx-container my-nginx-image
+          EOF
+
+      - name: Cleanup
+        run: terraform destroy -auto-approve
