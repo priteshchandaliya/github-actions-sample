@@ -56,18 +56,10 @@ jobs:
             tfplan
             terraform_apply_output.txt
 
-      - name: Connect to EC2 using password
-        run: sshpass -p 'CloudLabs12$' ssh -o StrictHostKeyChecking=no ec2-user@${{ steps.get-ip.outputs.public_ip }} "echo 'Connected to EC2'"
-
-      - name: Install Docker and Nginx
+      - name: Install Docker and Run Nginx
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ steps.get-ip.outputs.public_ip }} << 'EOF'
-            sudo amazon-linux-extras install -y docker
-            sudo service docker start
-            sudo usermod -a -G docker ec2-user
-            sudo docker build -t my-nginx-image .
-            sudo docker run -d -p 80:80 --name nginx-container my-nginx-image
-          EOF
+        echo "Public IP: ${{ steps.get-ip.outputs.public_ip }}"
+        ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ec2-user@${{ steps.get-ip.outputs.public_ip }} 'sudo docker run -d -p 80:80 nginx'
 
       - name: Cleanup
         run: terraform destroy -auto-approve

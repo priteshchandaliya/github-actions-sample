@@ -11,6 +11,11 @@ resource "aws_instance" "example" {
               echo 'CloudLabs12$' | sudo passwd ec2-user --stdin
               echo 'PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config
               sudo systemctl restart sshd
+              sudo yum update -y
+              sudo amazon-linux-extras install docker -y
+              sudo systemctl start docker
+              sudo systemctl enable docker
+              sudo usermod -aG docker ec2-user
               EOF
 
   tags = {
