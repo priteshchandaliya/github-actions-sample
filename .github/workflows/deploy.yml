@@ -39,6 +39,15 @@ jobs:
         run: echo "$(<terraform.tfstate)" > terraform_apply_output.txt
         shell: bash
 
+      - name: Get Public IP
+        id: get-ip
+        run: echo "::set-output name=public_ip::$(terraform output -raw public_ip)"
+
+      - name: Use Public IP in Next Step
+        run: |
+          echo "Public IP: ${{ steps.get-ip.outputs.public_ip }}"
+          # Use the public IP in your next steps or commands
+
       - name: Upload Terraform Artifacts
         uses: actions/upload-artifact@v2
         with:
@@ -47,21 +56,12 @@ jobs:
             tfplan
             terraform_apply_output.txt
 
-      - name: Install sshpass
-        run: sudo apt-get install -y sshpass
-
-      - name: Set up password for SSH
-        run: echo 'CloudLabs12$' > password.txt
-
-      - name: Copy password file to EC2
-        run: scp -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} password.txt ec2-user@${{ steps.setup.outputs.public_ip }}:/home/ec2-user/
-
       - name: Connect to EC2 using password
-        run: sshpass -p 'password123' ssh -o StrictHostKeyChecking=no ec2-user@${{ steps.setup.outputs.public_ip }} "echo 'Connected to EC2'"
+        run: sshpass -p 'CloudLabs12$' ssh -o StrictHostKeyChecking=no ec2-user@${{ steps.get-ip.outputs.public_ip }} "echo 'Connected to EC2'"
 
       - name: Install Docker and Nginx
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ steps.setup.outputs.public_ip }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ steps.get-ip.outputs.public_ip }} << 'EOF'
             sudo amazon-linux-extras install -y docker
             sudo service docker start
             sudo usermod -a -G docker ec2-user

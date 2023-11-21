@@ -6,6 +6,13 @@ resource "aws_instance" "example" {
   ami           = "ami-0230bd60aa48260c6"  # Ubuntu, change as needed
   instance_type = "t2.medium"  # Change to your desired instance type
 
+  user_data = <<-EOF
+              #!/bin/bash
+              echo 'CloudLabs12$' | sudo passwd ec2-user --stdin
+              echo 'PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config
+              sudo systemctl restart sshd
+              EOF
+
   tags = {
     Name = "nginx-instance"
   }
@@ -15,4 +22,8 @@ resource "aws_instance" "example" {
     user     = "ec2-user"
     password = "CloudLabs12$"
   }
+}
+
+output "public_ip" {
+  value = aws_instance.example.public_ip
 }
