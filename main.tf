@@ -5,7 +5,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "example" {
-  ami           = "ami-053b0d53c279acc90"  # Ubuntu, change as needed
+  ami           = "ami-0c55b159cbfafe1f0"  # Ubuntu, change as needed
   instance_type = "t2.medium"  # Change to your desired instance type
 
   tags = {
