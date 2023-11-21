@@ -1,9 +1,18 @@
-Here's a step-by-step guide on how to create a GitHub Actions project
+Here's a step-by-step guide on how to create a GitHub Actions project and enable the checkov (Prisma Cloud) scan for misconfigurations, vulnerabilities, compliance and secret.
 
 
 This will create a workflow:
 
-- Provision a EC2 instance 
-- Install Docker
-- Run a nginx container
-- Allow SSH access to the VM via a password
+- Provision a EC2 instance via terraform 
+- Scan the terraform template (IaC) for any of the misconfigurations, vulnerabilities
+- Scan a vulnerable app (code included)
+
+
+Steps:
+
+1. Fork this repo
+2. Add the AWS key and secret under Actions > secret
+3. Add the checkov (prisma cloud) access key and secret under Actions > secret
+4. Make a change to the readme file and commit the changes and push it
+5. Monitor the Actions tab on the Github UI
+6. It should show you step by step all the results
