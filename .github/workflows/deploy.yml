@@ -56,7 +56,6 @@ jobs:
             tfplan
             terraform_apply_output.txt
 
-      steps:
       - name: Checkout repo
         uses: actions/checkout@v2
 
