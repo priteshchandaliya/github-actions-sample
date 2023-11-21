@@ -28,8 +28,24 @@ jobs:
       - name: Initialize Terraform
         run: terraform init
 
-      - name: Apply Terraform
-        run: terraform apply -auto-approve
+      - name: Save Terraform Plan
+        run: terraform plan -out=tfplan
+        id: plan
+
+      - name: Apply Terraform Changes
+        run: terraform apply -auto-approve tfplan
+
+      - name: Save Terraform Apply Output
+        run: echo "$(<terraform.tfstate)" > terraform_apply_output.txt
+        shell: bash
+
+      - name: Upload Terraform Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: terraform-artifacts
+          path: |
+            tfplan
+            terraform_apply_output.txt
 
       - name: Install sshpass
         run: sudo apt-get install -y sshpass
