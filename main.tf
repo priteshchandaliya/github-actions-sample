@@ -1,6 +1,5 @@
 provider "aws" {
   region = "us-east-1"  # Change this to your desired region
-  shared_credentials_file = "/root/.aws/credentials"
 }
 
 resource "aws_instance" "example" {
