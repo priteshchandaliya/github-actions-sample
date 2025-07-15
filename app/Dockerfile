@@ -1,4 +1,4 @@
-FROM maven:3-jdk-11
+FROM maven:3.8.7-openjdk-18-slim
 
 RUN apt-get update && apt-get upgrade -y && apt-get install \
     zlib1g zlib1g-dev -y \
